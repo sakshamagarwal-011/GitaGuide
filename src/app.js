@@ -56,3 +56,15 @@ function updateSound(){const playing=!backgroundMusic.paused;soundToggle.textCon
 soundToggle.onclick=async()=>{if(!backgroundMusic.paused){backgroundMusic.pause();updateSound();return;}try{await backgroundMusic.play();updateSound();}catch{toast('Music could not start. Please try again.');updateSound();}};
 backgroundMusic.addEventListener('error',()=>{updateSound();toast('Background music could not load. Please try again.');});
 backgroundMusic.addEventListener('pause',updateSound);backgroundMusic.addEventListener('play',updateSound);
+const krishnaButton=$('#krishna-mode');let krishnaActive=false,flightFrame=null;
+krishnaButton.onclick=()=>{
+ if(krishnaActive){cancelAnimationFrame(flightFrame);document.querySelector('.theme-reveal')?.remove();document.body.classList.remove('krishna-theme');$('#feather-flight').style.opacity='0';krishnaActive=false;krishnaButton.setAttribute('aria-pressed','false');krishnaButton.textContent='✦ Krishna mode';backgroundMusic.pause();return;}
+ krishnaActive=true;krishnaButton.setAttribute('aria-pressed','true');krishnaButton.textContent='✦ Krishna mode on';backgroundMusic.play().then(updateSound).catch(()=>toast('Tap Sound on to start the music.'));
+ if(matchMedia('(prefers-reduced-motion: reduce)').matches){document.body.classList.add('krishna-theme');return;}
+ // Preserve the original view above the themed page, then reveal the theme along the feather's diagonal path.
+ const old=document.createElement('div');old.className='theme-reveal';old.style.background=getComputedStyle(document.body).backgroundColor;old.style.clipPath='polygon(0 0,100% 0,100% 100%,0 100%)';
+ const clone=document.querySelector('main').cloneNode(true);clone.querySelectorAll('[id]').forEach(e=>e.removeAttribute('id'));clone.style.marginLeft=getComputedStyle(document.querySelector('main')).marginLeft;clone.style.height='100%';clone.style.overflow='hidden';old.append(clone);document.body.append(old);
+ document.body.classList.add('krishna-theme');const feather=$('#feather-flight');const start=performance.now();
+ function drift(now){const p=Math.min((now-start)/6500,1);const x=-70+p*(innerWidth+100)+Math.sin(p*Math.PI*5)*32;const y=-170+p*(innerHeight+220)+Math.sin(p*Math.PI*3)*15;feather.style.opacity=p>.94?String((1-p)/.06):'1';feather.style.transform=`translate(${x}px,${y}px) rotate(${Math.sin(p*Math.PI*6)*19+20}deg)`;const edge=p*210;old.style.clipPath=`polygon(${Math.max(0,edge-100)}% 0,100% 0,100% ${Math.min(100,edge)}%,${Math.min(100,edge)}% ${Math.min(100,edge)}%,0 ${Math.min(100,edge)}%,0 ${Math.max(0,edge-100)}%)`;old.style.opacity=String(1-p);if(p<1)flightFrame=requestAnimationFrame(drift);else{old.remove();feather.style.opacity='0';}}
+ flightFrame=requestAnimationFrame(drift);
+};

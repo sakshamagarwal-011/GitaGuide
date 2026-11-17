@@ -22,13 +22,13 @@ export default {async fetch(request,env={}){
   const crisis=safetyResponse(body.query);if(crisis)return json({text:crisis,reflection:null,verses:[],mode:'support'});
   const result=retrieve(body.query,VERSES,typeof body.previous==='string'?body.previous.slice(-4000):'');
   const basic={...fallback(result),verses:result.verses,mode:'search'};
-  const key=request.headers.get('x-gemini-api-key')||env.GEMINI_API_KEY;
+  const key=request.headers.get('x-gemini-api-key')||env.OPENROUTER_API_KEY||env.GEMINI_API_KEY;
   if(!key)return json({...basic,notice:'Gemini connect नहीं है। नीचे तैयार की गई व्याख्या है, personalized AI उत्तर नहीं। / Connect Gemini for a personalized explanation.'});
   if(key.length>1024)return json({error:'Invalid key'},400);
   const signal=AbortSignal.timeout(45000);
   const history=Array.isArray(body.history)?body.history.slice(-8).filter(m=>m&&['user','assistant'].includes(m.role)&&typeof m.text==='string').map(m=>({role:m.role,text:m.text.slice(0,2500)})):[];
   try{
-   const model=typeof body.model==='string'?body.model:env.GEMINI_MODEL||(await discoverModels(key,signal))[0].id;
+   const model=typeof body.model==='string'?body.model:env.OPENROUTER_API_KEY?'or:openrouter/free':env.GEMINI_MODEL||(await discoverModels(key,signal))[0].id;
    return json(await explainWithGemini(body,result,history,key,model,signal));
   }catch(e){return json({...basic,notice:geminiErrors[e.code]||geminiErrors.unavailable,errorCode:e.code||'unavailable'});}
 

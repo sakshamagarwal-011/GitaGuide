@@ -33,6 +33,7 @@ export default {async fetch(request,env={}){
   }catch(e){return json({...basic,notice:geminiErrors[e.code]||geminiErrors.unavailable,errorCode:e.code||'unavailable'});}
 
  }
- const asset=ASSETS[path==='/'?'/index.html':path];if(asset)return new Response(asset.body,{headers:{...headers,'Content-Type':asset.type,'Content-Security-Policy':"default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self'; connect-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'"}});
+ if(path==='/music.mpeg'){const bytes=Uint8Array.from(atob(MUSIC),c=>c.charCodeAt(0));return new Response(bytes,{headers:{'Content-Type':'audio/mpeg','Content-Length':String(bytes.length),'Cache-Control':'public, max-age=86400'}});}
+ const asset=ASSETS[path==='/'?'/index.html':path];if(asset)return new Response(asset.body,{headers:{...headers,'Content-Type':asset.type,'Content-Security-Policy':"default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self'; connect-src 'self'; img-src 'self' data:; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"}});
  return new Response('Not found',{status:404,headers});
 }};

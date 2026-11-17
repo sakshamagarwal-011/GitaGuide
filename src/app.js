@@ -48,3 +48,11 @@ $('#info-dialog').addEventListener('close',()=>$('#dialog-body').replaceChildren
 $('#connect-gemini').onclick=connectionDialog;
 $('#mode-info').onclick=connectionDialog;
 try{const [v,c,status]=await Promise.all([fetch('/api/verses').then(r=>r.json()),fetch('/api/chapters').then(r=>r.json()),fetch('/api/status').then(r=>r.json())]);corpus=v;chapters=c;$('#chapter-select').innerHTML+='<option disabled>────────────</option>'+chapters.map(c=>`<option value="${c.number}">${c.number}. ${esc(c.name)}</option>`).join('');hostedAI=status.ai;updateConnection();}catch{toast('The verse library could not load. Please refresh to retry.');}
+
+const backgroundMusic=new Audio('/music.mpeg');
+backgroundMusic.loop=true;backgroundMusic.preload='none';backgroundMusic.volume=.4;
+const soundToggle=$('#sound-toggle');
+function updateSound(){const playing=!backgroundMusic.paused;soundToggle.textContent=playing?'♫ Sound on':'♫ Sound off';soundToggle.setAttribute('aria-pressed',String(playing));soundToggle.setAttribute('aria-label',playing?'Mute background music':'Play background music');soundToggle.title=playing?'Mute background music':'Play background music';}
+soundToggle.onclick=async()=>{if(!backgroundMusic.paused){backgroundMusic.pause();updateSound();return;}try{await backgroundMusic.play();updateSound();}catch{toast('Music could not start. Please try again.');updateSound();}};
+backgroundMusic.addEventListener('error',()=>{updateSound();toast('Background music could not load. Please try again.');});
+backgroundMusic.addEventListener('pause',updateSound);backgroundMusic.addEventListener('play',updateSound);

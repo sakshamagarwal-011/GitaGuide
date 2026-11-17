@@ -62,7 +62,7 @@ krishnaButton.onclick=()=>{
  krishnaActive=true;krishnaButton.setAttribute('aria-pressed','true');krishnaButton.textContent='✦ Krishna mode on';backgroundMusic.play().then(updateSound).catch(()=>toast('Tap Sound on to start the music.'));
  if(matchMedia('(prefers-reduced-motion: reduce)').matches){document.body.classList.add('krishna-theme');return;}
  // Freeze the original viewport with computed styles so layout and text remain pixel-aligned.
- const old=document.createElement('div');old.className='theme-reveal';old.setAttribute('aria-hidden','true');old.inert=true;old.style.cssText='position:fixed;inset:0;z-index:15;pointer-events:none;overflow:hidden;background:'+getComputedStyle(document.body).backgroundColor;
+ const old=document.createElement('div');old.className='theme-reveal';old.setAttribute('aria-hidden','true');old.inert=true;old.style.cssText='position:fixed;inset:0;z-index:15;pointer-events:none;overflow:hidden;clip-path:none;opacity:1;background:'+getComputedStyle(document.body).backgroundColor;
  for(const source of [document.querySelector('#sidebar'),document.querySelector('main')]){
   const copy=source.cloneNode(true);const originals=[source,...source.querySelectorAll('*')];const copies=[copy,...copy.querySelectorAll('*')];
   originals.forEach((e,i)=>{const cs=getComputedStyle(e);for(const name of cs)copies[i].style.setProperty(name,cs.getPropertyValue(name));copies[i].removeAttribute('id');copies[i].scrollTop=e.scrollTop;});
@@ -73,7 +73,7 @@ krishnaButton.onclick=()=>{
  const feather=$('#feather-flight');const start=performance.now();let lastX=-60,lastY=-100;
  function drift(now){const p=Math.min((now-start)/6500,1);const x=-70+p*(innerWidth+100)+Math.sin(p*Math.PI*5)*32;const y=-170+p*(innerHeight+220)+Math.sin(p*Math.PI*3)*15;const tipX=x+50,tipY=y+100;
   feather.style.opacity=p>.94?String((1-p)/.06):'1';feather.style.transform=`translate(${x}px,${y}px) rotate(${Math.sin(p*Math.PI*6)*19+20}deg)`;
-  ctx.lineCap='round';ctx.lineWidth=Math.max(160,Math.min(innerWidth,innerHeight)*.55);ctx.beginPath();ctx.moveTo(lastX,lastY);ctx.lineTo(tipX,tipY);ctx.stroke();lastX=tipX;lastY=tipY;
+  ctx.lineCap='round';ctx.lineWidth=Math.max(100,Math.min(innerWidth,innerHeight)*.25);ctx.beginPath();ctx.moveTo(lastX,lastY);ctx.lineTo(tipX,tipY);ctx.stroke();lastX=tipX;lastY=tipY;
   if(p>.8){ctx.lineWidth=(p-.8)/.2*Math.hypot(innerWidth,innerHeight)*2;ctx.beginPath();ctx.moveTo(tipX,tipY);ctx.lineTo(tipX+.1,tipY+.1);ctx.stroke();}
   const image='url('+mask.toDataURL()+')';old.style.maskImage=image;old.style.webkitMaskImage=image;
   if(p<1)flightFrame=requestAnimationFrame(drift);else{old.remove();feather.style.opacity='0';}}

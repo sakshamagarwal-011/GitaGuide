@@ -1,1 +1,14 @@
-{"name":"gitaguide","private":true,"type":"module","scripts":{"build":"node build.mjs","test":"node --test test.mjs"}}
+{
+  "name": "gitaguide",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test test.mjs",
+    "start": "node launch.mjs",
+    "dev": "node launch.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

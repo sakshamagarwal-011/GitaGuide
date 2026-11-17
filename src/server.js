@@ -2,7 +2,7 @@ export default {async fetch(request,env={}){
  const url=new URL(request.url);const path=url.pathname;
  const headers={'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'strict-origin-when-cross-origin'};
  const json=(body,status=200)=>Response.json(body,{status,headers});
- if(path==='/api/status')return json({ai:!!env.GEMINI_API_KEY,provider:env.GEMINI_API_KEY?'Gemini':null});
+ if(path==='/api/status')return json({ai:!!(env.OPENROUTER_API_KEY||env.GEMINI_API_KEY),provider:env.OPENROUTER_API_KEY?'OpenRouter':env.GEMINI_API_KEY?'Gemini':null});
  if(path==='/api/verses')return json(VERSES);
  if(path==='/api/chapters')return json(CHAPTERS);
  if(path==='/api/gemini/connect'){
